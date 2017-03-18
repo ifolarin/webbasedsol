@@ -1,0 +1,117 @@
+version: '2'
+services:
+  mail:
+    image: tvial/docker-mailserver:2.1
+    hostname: mail
+    domainname: example.org
+    #container_name: mail
+    ports:
+    - "25:25"
+    - "143:143"
+    - "587:587"
+    - "993:993"
+    depends_on:
+      - openldap
+    volumes:
+    - maildata:/var/mail
+    - mailstate:/var/mail-state
+    - ./config/:/tmp/docker-mailserver/
+    environment:
+    - ENABLE_SPAMASSASSIN=1
+    - ENABLE_CLAMAV=1
+    - ENABLE_FAIL2BAN=1
+    - ONE_DIR=1
+    - DMS_DEBUG=1
+    #- ENABLE_POP3=1
+    #- ENABLE_MANAGESIEVE=1
+    - ENABLE_FETCHMAIL=0
+    - ENABLE_LDAP=1
+    - LDAP_SERVER_HOST=openldap
+    - LDAP_SEARCH_BASE=ou=people,dc=example,dc=org
+    - LDAP_BIND_DN=cn=admin,dc=example,dc=org
+    - LDAP_BIND_PW=admin
+      #- OVERRIDE_HOSTNAME=
+      #- POSTMASTER_ADDRESS=
+      #- ENABLE_POSTGREY=1
+      #- POSTGREY_DELAY=300 #greylist for N seconds
+      #- POSTGREY_MAX_AGE=35 #delete entries older than N days since the last time they have been see
+      #- POSTGREY_TEXT=Dealyed by postgrey
+    - ENABLE_SASLAUTHD=1
+    - SASLAUTHD_MECHANISMS=ldap
+      #- SASLAUTHD_MECH_OPTIONS
+    - SASLAUTHD_LDAP_SERVER=openldap
+      #- SASLAUTHD_LDAP_SSL=1
+    - SASLAUTHD_LDAP_BIND_DN=cn=admin,dc=example,dc=org
+    - SASLAUTHD_LDAP_PASSWORD=admin
+    - SASLAUTHD_LDAP_SEARCH_BASE=ou=people,dc=example,dc=org
+      #- SASLAUTHD_LDAP_FILTER=(&(uid=%u)(mailEnabled=TRUE))
+    - SASLAUTHD_LDAP_FILTER=(&(mail=%s)(mailEnabled=TRUE))
+      #- SSL_TYPE=letsencrypt
+      #- PERMIT_DOCKER=
+      #- VIRUSMAILS_DELETE_DELAY=7 #Mumber of days before virus mail is deleted from server
+  openldap:
+    image: ifolarin/openldap:0.3.2
+    #container_name: openldap
+    environment:
+      LDAP_LOG_LEVEL: "256"
+      LDAP_ORGANISATION: "Example Inc."
+      LDAP_DOMAIN: "example.org"
+      LDAP_BASE_DN: ""
+      LDAP_ADMIN_PASSWORD: "admin"
+      LDAP_CONFIG_PASSWORD: "config"
+      LDAP_READONLY_USER: "false"
+      #LDAP_READONLY_USER_USERNAME: "readonly"
+      #LDAP_READONLY_USER_PASSWORD: "readonly"
+      LDAP_BACKEND: "hdb"
+      #LDAP_TLS: "true"
+      LDAP_TLS: "false"
+      LDAP_TLS_CRT_FILENAME: "ldap.crt"
+      LDAP_TLS_KEY_FILENAME: "ldap.key"
+      LDAP_TLS_CA_CRT_FILENAME: "ca.crt"
+      LDAP_TLS_ENFORCE: "false"
+      LDAP_TLS_CIPHER_SUITE: "SECURE256:-VERS-SSL3.0"
+      LDAP_TLS_PROTOCOL_MIN: "3.1"
+      LDAP_TLS_VERIFY_CLIENT: "demand"
+      LDAP_REPLICATION: "false"
+      #LDAP_REPLICATION_CONFIG_SYNCPROV: "binddn="cn=admin,cn=config" bindmethod=simple credentials=$LDAP_CONFIG_PASSWORD searchbase="cn=config" type=refreshAndPersist retry="60 +" timeout=1 starttls=critical"
+      #LDAP_REPLICATION_DB_SYNCPROV: "binddn="cn=admin,$LDAP_BASE_DN" bindmethod=simple credentials=$LDAP_ADMIN_PASSWORD searchbase="$LDAP_BASE_DN" type=refreshAndPersist interval=00:00:00:10 retry="60 +" timeout=1 starttls=critical"
+      #LDAP_REPLICATION_HOSTS: "#PYTHON2BASH:['ldap://ldap.example.org','ldap://ldap2.example.org']"
+      LDAP_REMOVE_CONFIG_AFTER_SETUP: "true"
+      LDAP_SSL_HELPER_PREFIX: "ldap"
+    tty: true
+    stdin_open: true
+    volumes:
+      - /var/lib/ldap
+      - /etc/ldap/slapd.d
+      - /container/service/slapd/assets/certs/
+    ports:
+      - "389:389"
+      - "636:636"
+    hostname: "example.org"
+  webmail:
+    image: runningman84/rainloop
+    mem_limit: 256m
+    links:
+      - mail:mail.example.org
+    depends_on:
+      - mail
+    ports: 
+      - 80:80
+    environment: 
+      - APACHE_SERVER_NAME=webmail.example.org
+  phpldapadmin:
+    image: osixia/phpldapadmin:latest
+    #container_name: phpldapadmin
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: "openldap"
+      PHPLDAPADMIN_HTTPS: "false"
+    ports:
+      - "8080:80"
+    depends_on:
+      - openldap
+
+volumes:
+  maildata:
+    driver: local
+  mailstate:
+    driver: local

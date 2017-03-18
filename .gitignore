@@ -1,0 +1,7 @@
+.DS_Store
+config
+*.zip
+docker-mmc-mail-stable/
+docker-openldap-stable/
+maienv.list
+tvial-mailserver/
