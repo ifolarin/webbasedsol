@@ -37,10 +37,11 @@ services:
       #- POSTGREY_MAX_AGE=35 #delete entries older than N days since the last time they have been see
       #- POSTGREY_TEXT=Dealyed by postgrey
     - ENABLE_SASLAUTHD=1
+      #- ENABLE_SASLAUTHD=1
     - SASLAUTHD_MECHANISMS=ldap
-      #- SASLAUTHD_MECH_OPTIONS
+    - SASLAUTHD_MECH_OPTIONS=mail.example.org
     - SASLAUTHD_LDAP_SERVER=openldap
-      #- SASLAUTHD_LDAP_SSL=1
+    - SASLAUTHD_LDAP_SSL=1
     - SASLAUTHD_LDAP_BIND_DN=cn=admin,dc=example,dc=org
     - SASLAUTHD_LDAP_PASSWORD=admin
     - SASLAUTHD_LDAP_SEARCH_BASE=ou=people,dc=example,dc=org
@@ -89,7 +90,7 @@ services:
       - "636:636"
     hostname: "example.org"
   webmail:
-    image: runningman84/rainloop
+    image: ifolarin/rainloop:0.1.0
     mem_limit: 256m
     links:
       - mail:mail.example.org
