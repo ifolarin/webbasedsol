@@ -110,6 +110,27 @@ services:
       - "8080:80"
     depends_on:
       - openldap
+  lssp:
+    image: dtwardow/ldap-self-service-password
+    #container_name: openldap
+    hostname: lssp
+    ports:
+      - "8000:80"
+    links: 
+      - openldap:ldap-host
+      #  - mail:mail
+    environment:
+      #LDAP Self-Service-Password variables
+      LSSP_ATTR_LOGIN: uniqueIdentifier
+      LSSP_ATTR_FN: cn
+      LSSP_ATTR_MAIL: mail
+      LSSP_ATTR_ACTION: change
+      #OpenLDAP-Server variables 
+      LDAP_BASE: dc=example,dc=org
+      LDAP_HOST: ldap-host
+      LDAP_PORT: 389 #Default
+      LDAP_USER: cn=admin,dc=example,dc=org
+      LDAP_PASS: admin
 
 volumes:
   maildata:
