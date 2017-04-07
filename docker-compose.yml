@@ -24,7 +24,7 @@ services:
     - DMS_DEBUG=1
     #- ENABLE_POP3=1
     #- ENABLE_MANAGESIEVE=1
-    - ENABLE_FETCHMAIL=0
+    - ENABLE_FETCHMAIL=1
     - ENABLE_LDAP=1
     - LDAP_SERVER_HOST=openldap
     - LDAP_SEARCH_BASE=ou=people,dc=example,dc=org
@@ -41,13 +41,13 @@ services:
     - SASLAUTHD_MECHANISMS=ldap
     - SASLAUTHD_MECH_OPTIONS=mail.example.org
     - SASLAUTHD_LDAP_SERVER=openldap
-    - SASLAUTHD_LDAP_SSL=1
+    - SASLAUTHD_LDAP_SSL=0
     - SASLAUTHD_LDAP_BIND_DN=cn=admin,dc=example,dc=org
     - SASLAUTHD_LDAP_PASSWORD=admin
     - SASLAUTHD_LDAP_SEARCH_BASE=ou=people,dc=example,dc=org
       #- SASLAUTHD_LDAP_FILTER=(&(uid=%u)(mailEnabled=TRUE))
     - SASLAUTHD_LDAP_FILTER=(&(mail=%s)(mailEnabled=TRUE))
-      #- SSL_TYPE=letsencrypt
+    - SSL_TYPE=self-signed   #letsencrypt
       #- PERMIT_DOCKER=
       #- VIRUSMAILS_DELETE_DELAY=7 #Mumber of days before virus mail is deleted from server
   openldap:

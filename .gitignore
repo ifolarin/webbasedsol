@@ -1,5 +1,5 @@
 .DS_Store
-config
+# config
 *.zip
 docker-mmc-mail-stable/
 docker-openldap-stable/

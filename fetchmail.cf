@@ -1,0 +1,7 @@
+poll 'imap.gmail.com' proto imap
+				user 'ifolarin@webbasedsol.com'
+				pass 'bu81ne88'
+				is 'jane.morris@example.org'
+				ssl
+
+set daemon 60
