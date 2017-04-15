@@ -4,6 +4,8 @@ services:
     image: tvial/docker-mailserver:2.1
     hostname: mail
     domainname: example.org
+    links:
+      - elk
     #container_name: mail
     ports:
     - "25:25"
@@ -20,11 +22,12 @@ services:
     - ENABLE_SPAMASSASSIN=1
     - ENABLE_CLAMAV=1
     - ENABLE_FAIL2BAN=1
+    - ENABLE_ELK_FORWARDER=1
     - ONE_DIR=1
     - DMS_DEBUG=1
     #- ENABLE_POP3=1
     #- ENABLE_MANAGESIEVE=1
-    - ENABLE_FETCHMAIL=1
+    - ENABLE_FETCHMAIL=0
     - ENABLE_LDAP=1
     - LDAP_SERVER_HOST=openldap
     - LDAP_SEARCH_BASE=ou=people,dc=example,dc=org
@@ -36,7 +39,7 @@ services:
       #- POSTGREY_DELAY=300 #greylist for N seconds
       #- POSTGREY_MAX_AGE=35 #delete entries older than N days since the last time they have been see
       #- POSTGREY_TEXT=Dealyed by postgrey
-    - ENABLE_SASLAUTHD=1
+    - ENABLE_SASLAUTHD=0
       #- ENABLE_SASLAUTHD=1
     - SASLAUTHD_MECHANISMS=ldap
     - SASLAUTHD_MECH_OPTIONS=mail.example.org
@@ -50,8 +53,10 @@ services:
     - SSL_TYPE=self-signed   #letsencrypt
       #- PERMIT_DOCKER=
       #- VIRUSMAILS_DELETE_DELAY=7 #Mumber of days before virus mail is deleted from server
+    restart: always 
+
   openldap:
-    image: ifolarin/openldap:0.3.2
+    image: webbasedsol/openldap:0.3.2
     #container_name: openldap
     environment:
       LDAP_LOG_LEVEL: "256"
@@ -89,6 +94,16 @@ services:
       - "389:389"
       - "636:636"
     hostname: "example.org"
+
+  elk:
+    build: elk
+    ports:
+      - "5601:5601"
+      - "9200:9200"
+      - "5044:5044"
+      - "5000:5000"
+    restart: always
+
   webmail:
     image: ifolarin/rainloop:0.1.0
     mem_limit: 256m
@@ -100,8 +115,9 @@ services:
       - 80:80
     environment: 
       - APACHE_SERVER_NAME=webmail.example.org
+
   phpldapadmin:
-    image: osixia/phpldapadmin:latest
+    image: webbasedsol/phpldapadmin:0.1.0
     #container_name: phpldapadmin
     environment:
       PHPLDAPADMIN_LDAP_HOSTS: "openldap"
@@ -110,6 +126,7 @@ services:
       - "8080:80"
     depends_on:
       - openldap
+
   lssp:
     image: dtwardow/ldap-self-service-password
     #container_name: openldap
@@ -132,8 +149,36 @@ services:
       LDAP_USER: cn=admin,dc=example,dc=org
       LDAP_PASS: admin
 
+  openldap-backup:
+    image: osixia/openldap-backup:1.1.8
+    links:
+      - openldap
+    environment:
+      LDAP_BACKUP_CONFIG_CRON_EXP: 15 3 * * *
+      LDAP_BACKUP_DATA_CRON_EXP: 30 3 * * *
+    volumes:
+      - ldap-backup:/data/backup
+
+  backup:
+    image: osixia/backup-manager
+    environment:
+      BACKUP_MANAGER_TARBALL_DIRECTORIES: /data/backup/ldap /data/backup/mail-data /data/backup/mail-state
+      BACKUP_MANAGER_UPLOAD_METHOD: s3
+      BM_UPLOAD_S3_DESTINATION: wbs.example.org
+      BM_UPLOAD_S3_ACCESS_KEY: AKIAICKHFGYSOBEHRD5Q
+      BM_UPLOAD_S3_SECRET_KEY: tw0hLme7kb2tnrjJslxNfL4SJHkkRthwyBLM0UbH
+    volumes:
+      - backup-data:/data/backup
+      - ldap-backup:/data/backup/ldap
+      - maildata:/data/backup/mail-data
+      - mailstate:/data/backup/mail-state
+
 volumes:
   maildata:
     driver: local
   mailstate:
+    driver: local
+  backup-data:
+    driver: local
+  ldap-backup:
     driver: local
