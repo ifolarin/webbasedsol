@@ -118,7 +118,7 @@ services:
       #    restart: always
 
   webmail:
-    image: ifolarin/rainloop:0.1.0
+    image: webbasedsol/rainloop:0.1.0
     mem_limit: 256m
     links:
       - mail:mail.example.org
@@ -128,9 +128,11 @@ services:
       - 8090:80
     environment: 
       - APACHE_SERVER_NAME=webmail.example.org
+      - PHP_MAX_POST_SIZE=105M
+      - PHP_MAX_UPLOAD_SIZE=100M
 
   phpldapadmin:
-    image: osixia/phpldapadmin
+    image: webbasedsol/phpldapadmin
     #image: webbasedsol/phpldapadmin:0.1.0
     #container_name: phpldapadmin
     environment:
