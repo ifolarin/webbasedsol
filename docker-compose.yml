@@ -69,7 +69,8 @@ services:
     restart: always 
 
   openldap:
-    image: webbasedsol/openldap:0.3.2
+    image: webbasedsol/openldap:0.3.3
+    hostname: "ldap"
     #container_name: openldap
     environment:
       LDAP_LOG_LEVEL: "256"
@@ -106,7 +107,6 @@ services:
     ports:
       - "389:389"
       - "636:636"
-    hostname: "example.org"
 
       #  elk:
       #    build: elk
