@@ -1,11 +1,24 @@
 version: '2'
 services:
+  webproxy:
+    image: nginx
+    ports:
+    - "80:80"
+    - "443:443"
+    volumes:
+    - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    - ./config/letsencrypt/www:/var/www/letsencrypt
+    - ./config/letsencrypt/etc:/etc/letsencrypt
+    links:
+    - webmail
+    - phpldapadmin:ldapadmin
+
   mail:
     image: tvial/docker-mailserver:2.1
     hostname: mail
     domainname: example.org
-    links:
-      - elk
+    #links:
+    #  - elk
     #container_name: mail
     ports:
     - "25:25"
@@ -22,7 +35,7 @@ services:
     - ENABLE_SPAMASSASSIN=1
     - ENABLE_CLAMAV=1
     - ENABLE_FAIL2BAN=1
-    - ENABLE_ELK_FORWARDER=1
+      #- ENABLE_ELK_FORWARDER=1
     - ONE_DIR=1
     - DMS_DEBUG=1
     #- ENABLE_POP3=1
@@ -95,14 +108,14 @@ services:
       - "636:636"
     hostname: "example.org"
 
-  elk:
-    build: elk
-    ports:
-      - "5601:5601"
-      - "9200:9200"
-      - "5044:5044"
-      - "5000:5000"
-    restart: always
+      #  elk:
+      #    build: elk
+      #    ports:
+      #      - "5601:5601"
+      #      - "9200:9200"
+      #      - "5044:5044"
+      #      - "5000:5000"
+      #    restart: always
 
   webmail:
     image: ifolarin/rainloop:0.1.0
@@ -112,12 +125,13 @@ services:
     depends_on:
       - mail
     ports: 
-      - 80:80
+      - 8090:80
     environment: 
       - APACHE_SERVER_NAME=webmail.example.org
 
   phpldapadmin:
-    image: webbasedsol/phpldapadmin:0.1.0
+    image: osixia/phpldapadmin
+    #image: webbasedsol/phpldapadmin:0.1.0
     #container_name: phpldapadmin
     environment:
       PHPLDAPADMIN_LDAP_HOSTS: "openldap"
@@ -154,24 +168,40 @@ services:
     links:
       - openldap
     environment:
-      LDAP_BACKUP_CONFIG_CRON_EXP: 15 3 * * *
-      LDAP_BACKUP_DATA_CRON_EXP: 30 3 * * *
+      - LDAP_BACKUP_CONFIG_CRON_EXP=30 3 * * *
+      - LDAP_BACKUP_DATA_CRON_EXP=30 3 * * * *
     volumes:
       - ldap-backup:/data/backup
-
-  backup:
-    image: osixia/backup-manager
+        
+  s3-backup:
+    image: peterrus/s3-cron-backup
     environment:
-      BACKUP_MANAGER_TARBALL_DIRECTORIES: /data/backup/ldap /data/backup/mail-data /data/backup/mail-state
-      BACKUP_MANAGER_UPLOAD_METHOD: s3
-      BM_UPLOAD_S3_DESTINATION: wbs.example.org
-      BM_UPLOAD_S3_ACCESS_KEY: AKIAICKHFGYSOBEHRD5Q
-      BM_UPLOAD_S3_SECRET_KEY: tw0hLme7kb2tnrjJslxNfL4SJHkkRthwyBLM0UbH
+      - AWS_ACCESS_KEY_ID=AKIAICKHFGYSOBEHRD5Q
+      - AWS_SECRET_ACCESS_KEY=tw0hLme7kb2tnrjJslxNfL4SJHkkRthwyBLM0UbH
+      - S3_BUCKET_URL=s3://wbs.example.org/
+      - AWS_DEFAULT_REGION=us-east-1
+      - CRON_SCHEDULE=0 4 * * * # run every hour
+      - BACKUP_NAME=backoffice_backup
     volumes:
-      - backup-data:/data/backup
-      - ldap-backup:/data/backup/ldap
-      - maildata:/data/backup/mail-data
-      - mailstate:/data/backup/mail-state
+      - ldap-backup:/data/ldap:ro
+      - maildata:/data/maildata:ro
+      - mailstate:/data/mailstate:ro
+    restart: always
+
+    #  backup:
+    #    image: osixia/backup-manager
+    #    environment:
+    #      - BACKUP_MANAGER_TARBALL_DIRECTORIES=/data/backup/ldap /data/backup/mail-data /data/backup/mail-state
+    #      - BACKUP_MANAGER_CRON_EXP="0/5 * * * *"
+    #      - BACKUP_MANAGER_UPLOAD_METHOD=s3
+    #      - BM_UPLOAD_S3_DESTINATION="wbs.example.org"
+    #      - BM_UPLOAD_S3_ACCESS_KEY=AKIAICKHFGYSOBEHRD5Q
+    #      - BM_UPLOAD_S3_SECRET_KEY=tw0hLme7kb2tnrjJslxNfL4SJHkkRthwyBLM0UbH
+    #    volumes:
+    #      - backup-data:/data/backup
+    #      - ldap-backup:/data/backup/ldap
+    #      - maildata:/data/backup/mail-data
+    #      - mailstate:/data/backup/mail-state
 
 volumes:
   maildata:
