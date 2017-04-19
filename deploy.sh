@@ -27,5 +27,36 @@ cd -
 mkdir -p config/letsencrypt/log
 mkdir -p config/letsencrypt/etc
 cd config/letsencrypt
-docker run --rm -ti -v $PWD/log/:/var/log/letsencrypt -v $PWD/etc/:/etc/letsencrypt/ -p 443:443 haocen/certbot:latest certonly --standalone -d mail.kemifolarin.net
+docker run --rm -ti -v $PWD/log/:/var/log/letsencrypt -v $PWD/etc/:/etc/letsencrypt/ -p 443:443 haocen/certbot:latest certonly --standalone -d mail.example.org
 cd - 
+
+
+
+#Enable firewall
+echo -e "Enabling ufw firewall..."
+ufw enable
+
+#Allowing port traffic
+echo -e "Enabling ports..."
+
+echo -e "ssh..."
+ufw allow ssh
+echo -e "done."
+ 
+echo -e "http..."
+ufw allow http
+echo -e "done."
+
+echo -e "https..."
+ufw allow https
+echo -e "done."
+
+echo -e "143..."
+ufw allow 143
+echo -e "done."
+
+echo -e "587..."
+ufw allow 587
+echo -e "done."
+
+
