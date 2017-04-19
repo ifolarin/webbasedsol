@@ -104,9 +104,9 @@ services:
       - /var/lib/ldap
       - /etc/ldap/slapd.d
       - /container/service/slapd/assets/certs/
-    ports:
-      - "389:389"
-      - "636:636"
+    #ports:
+            #      - "389:389"
+            #      - "636:636"
 
       #  elk:
       #    build: elk
@@ -118,14 +118,14 @@ services:
       #    restart: always
 
   webmail:
-    image: webbasedsol/rainloop
+    image: webbasedsol/rainloop:0.1.0
     mem_limit: 256m
     links:
       - mail:mail.example.org
     depends_on:
       - mail
-    ports: 
-      - 8090:80
+    #ports: 
+            #  - 8090:80
     environment: 
       - APACHE_SERVER_NAME=webmail.example.org
       - PHP_MAX_POST_SIZE=105M
@@ -138,8 +138,8 @@ services:
     environment:
       PHPLDAPADMIN_LDAP_HOSTS: "openldap"
       PHPLDAPADMIN_HTTPS: "false"
-    ports:
-      - "8080:80"
+    #ports:
+            #      - "8080:80"
     depends_on:
       - openldap
 
@@ -147,8 +147,8 @@ services:
     image: dtwardow/ldap-self-service-password
     #container_name: openldap
     hostname: lssp
-    ports:
-      - "8000:80"
+    #ports:
+            # - "8000:80"
     links: 
       - openldap:ldap-host
       #  - mail:mail
