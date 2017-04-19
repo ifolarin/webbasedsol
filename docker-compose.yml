@@ -118,7 +118,7 @@ services:
       #    restart: always
 
   webmail:
-    image: webbasedsol/rainloop:0.1.0
+    image: webbasedsol/rainloop:0.2.0
     mem_limit: 256m
     links:
       - mail:mail.example.org
