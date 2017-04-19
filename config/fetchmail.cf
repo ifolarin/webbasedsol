@@ -1,9 +1,9 @@
 # Example configuration: IMAP
-poll imap.gmail.com with proto IMAP
-	user 'support@webbasedsol.com' there with
-	password 'P@$$w0rd!'
-	is 'support@example.org'
-	here ssl
+#poll imap.gmail.com with proto IMAP
+#	user 'support@some-domain.com' there with
+#	password 'somepass!'
+#	is 'support@example.org'
+#	here ssl
 
 ## Example configuration: POP3
 #poll pop.gmail.com with proto POP3
