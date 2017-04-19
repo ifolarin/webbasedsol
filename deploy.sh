@@ -27,7 +27,7 @@ cd -
 mkdir -p config/letsencrypt/log
 mkdir -p config/letsencrypt/etc
 cd config/letsencrypt
-docker run --rm -ti -v $PWD/log/:/var/log/letsencrypt -v $PWD/etc/:/etc/letsencrypt/ -p 443:443 haocen/certbot:latest certonly --standalone -d mail.example.org
+docker run --rm -ti -v $PWD/log/:/var/log/letsencrypt -v $PWD/etc/:/etc/letsencrypt/ -p 443:443 haocen/certbot:latest certonly --standalone -d mail.webbasedsol.com
 cd - 
 
 
