@@ -63,7 +63,7 @@ services:
     - SASLAUTHD_LDAP_SEARCH_BASE=ou=people,dc=webbasedsol,dc=com
       #- SASLAUTHD_LDAP_FILTER=(&(uid=%u)(mailEnabled=TRUE))
     - SASLAUTHD_LDAP_FILTER=(&(mail=%s)(mailEnabled=TRUE))
-    - SSL_TYPE=self-signed   #letsencrypt
+    - SSL_TYPE=letsencrypt
       #- PERMIT_DOCKER=
       #- VIRUSMAILS_DELETE_DELAY=7 #Mumber of days before virus mail is deleted from server
     restart: always 
