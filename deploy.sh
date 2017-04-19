@@ -18,8 +18,8 @@ cd -
 #Clone and build rainloop
 git clone https://github.com/ifolarin/docker-rainloop.git
 cd docker-rainloop/extend-runningman84-rainloop/
-docker build -t webbasedsol/rainloop:0.1.0 .
-docker tag  webbasedsol/rainloop:0.1.0 webbasedsol/rainloop:latest
+docker build -t webbasedsol/rainloop:0.2.0 .
+docker tag  webbasedsol/rainloop:0.2.0 webbasedsol/rainloop:latest
 cd -
 
 
