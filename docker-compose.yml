@@ -16,7 +16,7 @@ services:
   mail:
     image: tvial/docker-mailserver:2.1
     hostname: mail
-    domainname: example.org
+    domainname: webbasedsol.com
     #links:
     #  - elk
     #container_name: mail
@@ -43,8 +43,8 @@ services:
     - ENABLE_FETCHMAIL=0
     - ENABLE_LDAP=1
     - LDAP_SERVER_HOST=openldap
-    - LDAP_SEARCH_BASE=ou=people,dc=example,dc=org
-    - LDAP_BIND_DN=cn=admin,dc=example,dc=org
+    - LDAP_SEARCH_BASE=ou=people,dc=webbasedsol,dc=com
+    - LDAP_BIND_DN=cn=admin,dc=webbasedsol,dc=com
     - LDAP_BIND_PW=admin
       #- OVERRIDE_HOSTNAME=
       #- POSTMASTER_ADDRESS=
@@ -55,12 +55,12 @@ services:
     - ENABLE_SASLAUTHD=0
       #- ENABLE_SASLAUTHD=1
     - SASLAUTHD_MECHANISMS=ldap
-    - SASLAUTHD_MECH_OPTIONS=mail.example.org
+    - SASLAUTHD_MECH_OPTIONS=mail.webbasedsol.com
     - SASLAUTHD_LDAP_SERVER=openldap
     - SASLAUTHD_LDAP_SSL=0
-    - SASLAUTHD_LDAP_BIND_DN=cn=admin,dc=example,dc=org
+    - SASLAUTHD_LDAP_BIND_DN=cn=admin,dc=webbasedsol,dc=com
     - SASLAUTHD_LDAP_PASSWORD=admin
-    - SASLAUTHD_LDAP_SEARCH_BASE=ou=people,dc=example,dc=org
+    - SASLAUTHD_LDAP_SEARCH_BASE=ou=people,dc=webbasedsol,dc=com
       #- SASLAUTHD_LDAP_FILTER=(&(uid=%u)(mailEnabled=TRUE))
     - SASLAUTHD_LDAP_FILTER=(&(mail=%s)(mailEnabled=TRUE))
     - SSL_TYPE=self-signed   #letsencrypt
@@ -74,8 +74,8 @@ services:
     #container_name: openldap
     environment:
       LDAP_LOG_LEVEL: "256"
-      LDAP_ORGANISATION: "Example Inc."
-      LDAP_DOMAIN: "example.org"
+      LDAP_comANISATION: "webbasedsol Inc."
+      LDAP_DOMAIN: "webbasedsol.com"
       LDAP_BASE_DN: ""
       LDAP_ADMIN_PASSWORD: "admin"
       LDAP_CONFIG_PASSWORD: "config"
@@ -95,7 +95,7 @@ services:
       LDAP_REPLICATION: "false"
       #LDAP_REPLICATION_CONFIG_SYNCPROV: "binddn="cn=admin,cn=config" bindmethod=simple credentials=$LDAP_CONFIG_PASSWORD searchbase="cn=config" type=refreshAndPersist retry="60 +" timeout=1 starttls=critical"
       #LDAP_REPLICATION_DB_SYNCPROV: "binddn="cn=admin,$LDAP_BASE_DN" bindmethod=simple credentials=$LDAP_ADMIN_PASSWORD searchbase="$LDAP_BASE_DN" type=refreshAndPersist interval=00:00:00:10 retry="60 +" timeout=1 starttls=critical"
-      #LDAP_REPLICATION_HOSTS: "#PYTHON2BASH:['ldap://ldap.example.org','ldap://ldap2.example.org']"
+      #LDAP_REPLICATION_HOSTS: "#PYTHON2BASH:['ldap://ldap.webbasedsol.com','ldap://ldap2.webbasedsol.com']"
       LDAP_REMOVE_CONFIG_AFTER_SETUP: "true"
       LDAP_SSL_HELPER_PREFIX: "ldap"
     tty: true
@@ -121,13 +121,13 @@ services:
     image: webbasedsol/rainloop:0.2.0
     mem_limit: 256m
     links:
-      - mail:mail.example.org
+      - mail:mail.webbasedsol.com
     depends_on:
       - mail
     #ports: 
             #  - 8090:80
     environment: 
-      - APACHE_SERVER_NAME=webmail.example.org
+      - APACHE_SERVER_NAME=webmail.webbasedsol.com
       - PHP_MAX_POST_SIZE=105M
       - PHP_MAX_UPLOAD_SIZE=100M
 
@@ -159,10 +159,10 @@ services:
       LSSP_ATTR_MAIL: mail
       LSSP_ATTR_ACTION: change
       #OpenLDAP-Server variables 
-      LDAP_BASE: dc=example,dc=org
+      LDAP_BASE: dc=webbasedsol,dc=com
       LDAP_HOST: ldap-host
       LDAP_PORT: 389 #Default
-      LDAP_USER: cn=admin,dc=example,dc=org
+      LDAP_USER: cn=admin,dc=webbasedsol,dc=com
       LDAP_PASS: admin
 
   openldap-backup:
@@ -178,9 +178,9 @@ services:
   s3-backup:
     image: peterrus/s3-cron-backup
     environment:
-      - AWS_ACCESS_KEY_ID=AKIAICKHFGYSOBEHRD5Q
-      - AWS_SECRET_ACCESS_KEY=tw0hLme7kb2tnrjJslxNfL4SJHkkRthwyBLM0UbH
-      - S3_BUCKET_URL=s3://wbs.example.org/
+      - AWS_ACCESS_KEY_ID=
+      - AWS_SECRET_ACCESS_KEY=
+      - S3_BUCKET_URL=s3://wbs.webbasedsol.com/
       - AWS_DEFAULT_REGION=us-east-1
       - CRON_SCHEDULE=0 4 * * * # run every hour
       - BACKUP_NAME=backoffice_backup
@@ -196,7 +196,7 @@ services:
     #      - BACKUP_MANAGER_TARBALL_DIRECTORIES=/data/backup/ldap /data/backup/mail-data /data/backup/mail-state
     #      - BACKUP_MANAGER_CRON_EXP="0/5 * * * *"
     #      - BACKUP_MANAGER_UPLOAD_METHOD=s3
-    #      - BM_UPLOAD_S3_DESTINATION="wbs.example.org"
+    #      - BM_UPLOAD_S3_DESTINATION="wbs.webbasedsol.com"
     #      - BM_UPLOAD_S3_ACCESS_KEY=AKIAICKHFGYSOBEHRD5Q
     #      - BM_UPLOAD_S3_SECRET_KEY=tw0hLme7kb2tnrjJslxNfL4SJHkkRthwyBLM0UbH
     #    volumes:
