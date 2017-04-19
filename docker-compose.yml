@@ -69,7 +69,7 @@ services:
     restart: always 
 
   openldap:
-    image: webbasedsol/openldap:0.3.3
+    image: webbasedsol/openldap
     hostname: "ldap"
     #container_name: openldap
     environment:
@@ -118,7 +118,7 @@ services:
       #    restart: always
 
   webmail:
-    image: webbasedsol/rainloop:0.1.0
+    image: webbasedsol/rainloop
     mem_limit: 256m
     links:
       - mail:mail.example.org
