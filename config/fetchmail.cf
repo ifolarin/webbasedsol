@@ -1,3 +1,34 @@
+#Set polling interval to every minute
+#set daemon 60
+# Example configuration: IMAP
+#poll imap.gmail.com with proto IMAP 
+#       username "support@webbasedsol.com" password "" is support@webbasedsol.com" here ssl;
+#       username "ifolarin@webbasedsol.com" password "" is ifolarin@webbasedsol.com" here ssl;
+#       username "nobomighie@webbasedsol.com" password "" is nobomighie@webbasedsol.com" here ssl;
+#       username "admin@webbasedsol.com" password "" is kfolarin@webbasedsol.com" here ssl;
+#       username "sdiogba@webbasedsol.com" password "" is sdiogba@webbasedsol.com" here ssl;
+#
+#poll imap.gmail.com with proto POP3 
+#        username "support@webbasedsol.com" password "" is "support@webbasedsol.com" here options keep ssl;
+#                username "ifolarin@webbasedsol.com" password "" is "ifolarin@webbasedsol.com" here options keep ssl;
+#                        username "nobomighie@webbasedsol.com" password "" is "nobomighie@webbasedsol.com" here options keep ssl;
+#                                username "admin@webbasedsol.com" password "" is "kfolarin@webbasedsol.com" here options keep ssl;
+#                                        username "sdiogba@webbasedsol.com" password "" is "sdiogba@webbasedsol.com" here options keep ssl;
+#
+#                                        #poll imap.gmail.com with proto IMAP
+#                                        #       user 'support@webbasedsol.com' there with
+#                                        #       password ''
+#                                        #       is 'support@webbasedsol.com'
+#                                        #       here ssl
+#                                        #
+#                                        ## Example configuration: POP3
+#                                        #poll pop.gmail.com with proto POP3
+#                                        # user 'support@webbasedsol.com' there with
+#                                        # password ''
+#                                        # is 'support@webbasedsol.com'
+#                                        # here options keep ssl
+#
+
 # Example configuration: IMAP
 #poll imap.gmail.com with proto IMAP
 #	user 'support@some-domain.com' there with
@@ -8,6 +39,6 @@
 ## Example configuration: POP3
 #poll pop.gmail.com with proto POP3
 # user 'support@webbasedsol.com' there with
-# password 'P@$$w0rd!'
+# password ''
 # is 'support@example.org'
 # here options keep ssl
