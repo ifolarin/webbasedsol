@@ -26,6 +26,7 @@ services:
     - "143:143"
     - "587:587"
     - "993:993"
+    - "4190:4190"
     depends_on:
       - openldap
     volumes:
@@ -178,7 +179,7 @@ services:
       - ldap-backup:/data/backup
         
   s3-backup:
-    image: peterrus/s3-cron-backup
+          image: webbasedsol/s3-cron-backup:0.1.0
     environment:
       - AWS_ACCESS_KEY_ID=
       - AWS_SECRET_ACCESS_KEY=
