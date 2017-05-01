@@ -1,0 +1,25 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1504\cocoasubrtf760
+{\fonttbl\f0\fnil\fcharset0 AndaleMono;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red255\green255\blue255;}
+{\*\expandedcolortbl;;\csgenericrgb\c0\c0\c0;\csgenericrgb\c100000\c100000\c100000;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf2 \cb3 \CocoaLigature0 \
+#Command line args to fetch all mail - fire once\
+fetchmail --all -v  -p imap -k imap.gmail.com --ssl -d0 \\\
+--invisible --norewrite --sslcertck \\\
+--user support@webbasedsol.com \\\
+-m \'93sudo -H -u docker /usr/lib/dovecot/deliver -e -d support\'94\
+\
+\
+#Command line args to fetch all mail from sent folder - fire once\
+fetchmail --all -v  -p imap -k imap.gmail.com --ssl -d0 \\\
+--invisible --norewrite --sslcertck \\\
+--user support@webbasedsol.com \\\
+--folder \'93[Gmail]/Sent Mail\'94 \\\
+-m \'93sudo -H -u docker /usr/lib/dovecot/deliver -e -d support -m SENT\'94\
+\
+\
+# Delete all mails before a certain date\
+/usr/bin/doveadm expunge -u support@webbasedsol mailbox INBOX SENTBEFORE 22-APR-2017}
