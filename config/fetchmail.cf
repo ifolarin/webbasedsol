@@ -1,13 +1,29 @@
+#Set polling interval to every minute
+set daemon 60
 # Example configuration: IMAP
-poll imap.gmail.com with proto IMAP
-	user 'support@webbasedsol.com' there with
-	password 'P@$$w0rd!'
-	is 'support@example.org'
-	here ssl
+#poll imap.gmail.com with proto IMAP 
+#	username "support@webbasedsol.com" password "P@$$word" is support@webbasedsol.com" here ssl;
+#	username "ifolarin@webbasedsol.com" password "bu81ne88" is ifolarin@webbasedsol.com" here ssl;
+#	username "nobomighie@webbasedsol.com" password "wrewruspE6@s" is nobomighie@webbasedsol.com" here ssl;
+#	username "admin@webbasedsol.com" password "!2uSwUx7wRe$" is kfolarin@webbasedsol.com" here ssl;
+#	username "sdiogba@webbasedsol.com" password "mu3ASt$KeTaT" is sdiogba@webbasedsol.com" here ssl;
 
+poll pop.gmail.com with proto IMAP
+	username "support@webbasedsol.com" password "P@$$w0rd!" is "support@webbasedsol.com" here options keep ssl;
+#	username "ifolarin@webbasedsol.com" password "bu81ne88" is "ifolarin@webbasedsol.com" here options keep ssl;
+#	username "nobomighie@webbasedsol.com" password "wrewruspE6@s" is "nobomighie@webbasedsol.com" here options keep ssl;
+#	username "admin@webbasedsol.com" password "!2uSwUx7wRe$" is "kfolarin@webbasedsol.com" here options keep ssl;
+#	username "sdiogba@webbasedsol.com" password "mu3ASt$KeTaT" is "sdiogba@webbasedsol.com" here options keep ssl;
+
+#poll imap.gmail.com with proto IMAP
+#	user 'support@webbasedsol.com' there with
+#	password 'P@$$w0rd!'
+#	is 'support@webbasedsol.com'
+#	here ssl
+#
 ## Example configuration: POP3
 #poll pop.gmail.com with proto POP3
 # user 'support@webbasedsol.com' there with
 # password 'P@$$w0rd!'
-# is 'support@example.org'
+# is 'support@webbasedsol.com'
 # here options keep ssl
