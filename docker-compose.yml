@@ -1,4 +1,11 @@
 version: '2'
+
+networks:
+  default:
+    driver: bridge
+  gasolinerefinerycom_default:
+    external: true
+
 services:
   webproxy:
     image: nginx
@@ -11,35 +18,45 @@ services:
     - ./config/letsencrypt/etc:/etc/letsencrypt
     links:
     - webmail
+    - lssp
     - phpldapadmin:ldapadmin
+    networks:
+      - default
+      - gasolinerefinerycom_default
+    external_links:
+    - wp:gasolineref
+    restart: always 
+    #command: [nginx-debug, '-g', 'daemon off;']
 
   mail:
     image: tvial/docker-mailserver:2.1
     hostname: mail
     domainname: webbasedsol.com
     #links:
-    #  - elk
+    #  - openldap:ldap.webbasedsol.com
     #container_name: mail
     ports:
     - "25:25"
     - "143:143"
     - "587:587"
     - "993:993"
+    - "4190:4190"
     depends_on:
       - openldap
     volumes:
     - maildata:/var/mail
     - mailstate:/var/mail-state
     - ./config/:/tmp/docker-mailserver/
+    - ./config/letsencrypt/etc:/etc/letsencrypt
     environment:
     - ENABLE_SPAMASSASSIN=1
-    - ENABLE_CLAMAV=1
+    - ENABLE_CLAMAV=0
     - ENABLE_FAIL2BAN=1
       #- ENABLE_ELK_FORWARDER=1
     - ONE_DIR=1
     - DMS_DEBUG=1
     #- ENABLE_POP3=1
-    #- ENABLE_MANAGESIEVE=1
+    - ENABLE_MANAGESIEVE=1
     - ENABLE_FETCHMAIL=0
     - ENABLE_LDAP=1
     - LDAP_SERVER_HOST=openldap
@@ -74,7 +91,7 @@ services:
     #container_name: openldap
     environment:
       LDAP_LOG_LEVEL: "256"
-      LDAP_comANISATION: "webbasedsol Inc."
+      LDAP_ORGANISATION: "Webbased Solutions Ltd."
       LDAP_DOMAIN: "webbasedsol.com"
       LDAP_BASE_DN: ""
       LDAP_ADMIN_PASSWORD: "admin"
@@ -115,7 +132,7 @@ services:
       #      - "9200:9200"
       #      - "5044:5044"
       #      - "5000:5000"
-      #    restart: always
+    restart: always
 
   webmail:
     image: webbasedsol/rainloop:0.2.0
@@ -130,6 +147,7 @@ services:
       - APACHE_SERVER_NAME=webmail.webbasedsol.com
       - PHP_MAX_POST_SIZE=105M
       - PHP_MAX_UPLOAD_SIZE=100M
+    restart: always 
 
   phpldapadmin:
     image: webbasedsol/phpldapadmin
@@ -142,6 +160,7 @@ services:
             #      - "8080:80"
     depends_on:
       - openldap
+    restart: always
 
   lssp:
     image: dtwardow/ldap-self-service-password
@@ -164,30 +183,32 @@ services:
       LDAP_PORT: 389 #Default
       LDAP_USER: cn=admin,dc=webbasedsol,dc=com
       LDAP_PASS: admin
+    restart: always
 
   openldap-backup:
     image: osixia/openldap-backup:1.1.8
     links:
       - openldap
     environment:
-      - LDAP_BACKUP_CONFIG_CRON_EXP=30 3 * * *
-      - LDAP_BACKUP_DATA_CRON_EXP=30 3 * * * *
+      - LDAP_BACKUP_CONFIG_CRON_EXP=0 3 * * *
+      - LDAP_BACKUP_DATA_CRON_EXP=0 3 * * *
     volumes:
       - ldap-backup:/data/backup
+    restart: always
         
   s3-backup:
-    image: peterrus/s3-cron-backup
+    image: webbasedsol/s3-cron-backup:0.1.0
     environment:
-      - AWS_ACCESS_KEY_ID=
-      - AWS_SECRET_ACCESS_KEY=
-      - S3_BUCKET_URL=s3://wbs.webbasedsol.com/
+      - AWS_ACCESS_KEY_ID=AKIAJUYYPWFPVYHIVDZQ
+      - AWS_SECRET_ACCESS_KEY=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
+      - S3_BUCKET_URL=s3://webbasedsol/
       - AWS_DEFAULT_REGION=us-east-1
-      - CRON_SCHEDULE=0 4 * * * # run every hour
+      - CRON_SCHEDULE=0 4 * * * # run at 4am every day
       - BACKUP_NAME=backoffice_backup
     volumes:
       - ldap-backup:/data/ldap:ro
       - maildata:/data/maildata:ro
-      - mailstate:/data/mailstate:ro
+      #- mailstate:/data/mailstate:ro
     restart: always
 
     #  backup:
