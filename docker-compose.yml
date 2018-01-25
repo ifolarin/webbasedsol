@@ -199,9 +199,9 @@ services:
   s3-backup:
     image: webbasedsol/s3-cron-backup:0.1.0
     environment:
-      - AWS_ACCESS_KEY_ID=AKIAJUYYPWFPVYHIVDZQ
-      - AWS_SECRET_ACCESS_KEY=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
-      - S3_BUCKET_URL=s3://webbasedsol/
+      - AWS_ACCESS_KEY_ID=
+      - AWS_SECRET_ACCESS_KEY=
+      - S3_BUCKET_URL=
       - AWS_DEFAULT_REGION=us-east-1
       - CRON_SCHEDULE=0 4 * * * # run at 4am every day
       - BACKUP_NAME=backoffice_backup
@@ -217,9 +217,9 @@ services:
     #      - BACKUP_MANAGER_TARBALL_DIRECTORIES=/data/backup/ldap /data/backup/mail-data /data/backup/mail-state
     #      - BACKUP_MANAGER_CRON_EXP="0/5 * * * *"
     #      - BACKUP_MANAGER_UPLOAD_METHOD=s3
-    #      - BM_UPLOAD_S3_DESTINATION="wbs.webbasedsol.com"
-    #      - BM_UPLOAD_S3_ACCESS_KEY=AKIAICKHFGYSOBEHRD5Q
-    #      - BM_UPLOAD_S3_SECRET_KEY=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
+    #      - BM_UPLOAD_S3_DESTINATION=""
+    #      - BM_UPLOAD_S3_ACCESS_KEY=
+    #      - BM_UPLOAD_S3_SECRET_KEY=
     #    volumes:
     #      - backup-data:/data/backup
     #      - ldap-backup:/data/backup/ldap
