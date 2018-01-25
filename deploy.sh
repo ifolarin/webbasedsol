@@ -18,16 +18,17 @@ cd -
 #Clone and build rainloop
 git clone https://github.com/ifolarin/docker-rainloop.git
 cd docker-rainloop/extend-runningman84-rainloop/
-docker build -t webbasedsol/rainloop:0.1.0 .
-docker tag  webbasedsol/rainloop:0.1.0 webbasedsol/rainloop:latest
+docker build -t webbasedsol/rainloop:0.2.0 .
+docker tag  webbasedsol/rainloop:0.2.0 webbasedsol/rainloop:latest
 cd -
 
 #Clone and build s3-backup
 git clone https://github.com/ifolarin/docker-s3-cron-backup.git
 cd docker-s3-cron-backup
 docker build -t webbasedsol/s3-cron-backup:0.1.0
-docker tag  webbasedsol/s3-cron-backup:0.1.0 webbasedsol/rainloop:latest
+docker tag  webbasedsol/s3-cron-backup:0.1.0 webbasedsol/s3-cron-backup:latest
 cd -
+
 
 #Clone and build backoffice application
 mkdir -p config/letsencrypt/log
@@ -37,9 +38,11 @@ docker run --rm -ti -v $PWD/log/:/var/log/letsencrypt -v $PWD/etc/:/etc/letsencr
 cd - 
 
 
+#Enable firewall
+echo -e "Enabling ufw firewall..."
+ufw enable
 
-
-#Allowing firewall traffice ports:
+#Allowing port traffic
 echo -e "Enabling ports..."
 
 echo -e "ssh..."
@@ -62,6 +65,4 @@ echo -e "587..."
 ufw allow 587
 echo -e "done."
 
-#Enable firewall
-echo -e "Enabling ufw firewall..."
-ufw enable
+
